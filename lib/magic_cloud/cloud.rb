@@ -13,10 +13,15 @@ require_relative './debug'
 module MagicCloud
   # Main word-cloud class. Takes words with sizes, returns image
   class Cloud
+    FONT_MIN = 10
+    FONT_MAX = 100
+    
     def initialize(words, options = {})
       @words = words.sort_by(&:last).reverse
       @options = options
-      @scaler = make_scaler(words, options[:scale] || :log)
+      @font_min = options[:font_min] || FONT_MIN
+      @font_max = options[:font_max] || FONT_MAX
+      @scaler = make_scaler(words, options[:scale] || :log, @font_min, @font_max)
       @rotator = make_rotator(options[:rotate] || :square)
       @palette = make_palette(options[:palette] || :default)
     end
@@ -108,11 +113,7 @@ module MagicCloud
       end
     end
 
-    # FIXME: should be options too
-    FONT_MIN = 10
-    FONT_MAX = 100
-
-    def make_scaler(words, algo)
+    def make_scaler(words, algo, font_min, font_max)
       norm =
         case algo
         when :no
@@ -130,7 +131,7 @@ module MagicCloud
 
       smin = norm.call(words.map(&:last).min)
       smax = norm.call(words.map(&:last).max)
-      koeff = (FONT_MAX - FONT_MIN).to_f / (smax - smin)
+      koeff = (font_min - font_max).to_f / (smax - smin)
 
       ->(_word, size, _index){
         ssize = norm.call(size)
