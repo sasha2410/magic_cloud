@@ -135,7 +135,7 @@ module MagicCloud
 
       ->(_word, size, _index){
         ssize = norm.call(size)
-        ((ssize - smin).to_f * koeff + FONT_MIN).to_i
+        ((ssize - smin).to_f * koeff + font_min).to_i
       }
     end
     # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity,Metrics/AbcSize
